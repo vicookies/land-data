@@ -5,6 +5,7 @@ import re
 import sys
 import os
 from time import sleep
+from tkinter import N
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support.wait import WebDriverWait
@@ -21,7 +22,13 @@ def setdate (browser,date_begin,date_end):
     return
 
 def setzero (browser,zero):
-    browser.find_element_by_xpath('//*[@id="appMain"]/div/div[3]/div[3]/form[1]/div[1]/div/div/div/input').send_keys(zero)
+    browser.find_element_by_xpath('//*[@id="appMain"]/div/div[3]/div[3]/form[1]/div[1]/div/div/div/span').click()
+    sleep(1)
+    browser.find_element_by_xpath('//*[@id="cascader-menu-9577-0-14"]/span/span').click()
+    sleep(1)
+    browser.find_element_by_xpath('//*[@id="cascader-menu-5637-1-14"]').click()
+    sleep(1)
+    browser.find_element_by_xpath('//*[@id="cascader-menu-1341-2-1"]').click()
     sleep(1)
     return
 def enter (browser):
@@ -30,10 +37,21 @@ def enter (browser):
     return
 
 def getpage (browser):
-    try:
-        region=browser.find_element_by_xpath('//*[@id="appMain"]/div/div[3]/div[6]/div[1]/div/table/tr[2]/td[2]').text
-    except:
-        region='NULL'
+    getflag=0
+    countflag=0
+    while(getflag==0 or countflag<5):
+        try:
+            region=browser.find_element_by_xpath('//*[@id="appMain"]/div/div[3]/div[6]/div[1]/div/table/tr[2]/td[2]').text
+        except:
+            region='NULL'
+        if(region!=''):
+            getflag=1
+        else:
+            sleep(1)
+            countflag=countflag+1
+            browser.refresh()
+
+
     try:
         EMnumber=browser.find_element_by_xpath('//*[@id="appMain"]/div/div[3]/div[6]/div[1]/div/table/tr[2]/td[4]').text
     except:
@@ -142,8 +160,8 @@ def getData(date_begin=None,date_end=None,zero=None):
     options.binary_location = r'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe' # 浏览器的位置
     browser = Edge(options=options, executable_path=r'./msedgedriver') # 相应的浏览器的驱动位置
 
-    browser.get('https://www.landchina.com/#/resultNotice?path=0')#用chrome浏览器自动打开爬取的网页
-
+    browser.get('https://www.landchina.com/#/')#用chrome浏览器自动打开爬取的网页
+    input("input enter key to continue: ")
     f = open('chinaland.csv', 'w' ,encoding='utf-8-sig')
     f.truncate()
     fnames = ["region","EMnumber","PROJname","PROJlocat","area","landsources","landusage", \
@@ -190,13 +208,15 @@ def getData(date_begin=None,date_end=None,zero=None):
 
 
 if __name__ == "__main__":
-    opt_date_start = input("输入开始日期: (格式:2000-01-01,无开始日期则输入n/N)\n")
-    opt_date_end = input("输入结束日期: (格式:2000-01-01,无结束日期则输入n/N)\n")
-    opt_zero = input("输入地区: (无地区则输入n/N)\n")
-    if(opt_date_start=="N" or opt_date_start=="n"):
-        opt_date_start=None
-    if(opt_date_end=="N" or opt_date_end=="n"):
-        opt_date_end=None
-    if(opt_zero=="N" or opt_zero=="n"):
-        opt_zero=None
-    getData(opt_date_start,opt_date_end,opt_zero)
+    #opt_date_start = input("输入开始日期: (格式:2000-01-01,无开始日期则输入n/N)\n")
+    #opt_date_end = input("输入结束日期: (格式:2000-01-01,无结束日期则输入n/N)\n")
+    #opt_zero = input("输入地区: (无地区则输入n/N)\n")
+    #if(opt_date_start=="N" or opt_date_start=="n"):
+    #    opt_date_start=None
+    #if(opt_date_end=="N" or opt_date_end=="n"):
+    #    opt_date_end=None
+    #if(opt_zero=="N" or opt_zero=="n"):
+    #    opt_zero=None
+    getData()
+    print("/****************完成******************/")
+    input("input enter key to continue")

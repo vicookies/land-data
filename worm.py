@@ -39,7 +39,7 @@ def enter (browser):
 def getpage (browser):
     getflag=0
     countflag=0
-    while(getflag==0 or countflag<5):
+    while(getflag==0 and countflag<5):
         try:
             region=browser.find_element_by_xpath('//*[@id="appMain"]/div/div[3]/div[6]/div[1]/div/table/tr[2]/td[2]').text
         except:

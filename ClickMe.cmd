@@ -9,12 +9,23 @@ if %flag% == 1 goto pythonexist
 python -m pip install --upgrade pip   
 pip install selenium
 pip install msedge-selenium-tools
+
 if exist "msedgedriver.exe" (
     python ./worm.py
 ) else (
     echo "没有找到msedgedriver.exe"
-    echo "在浏览器上输入edge://version/查看edge版本,下载相应的webdriver到本文件目录下,并重新执行本文件"
-    start https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
+    if exist "msedgedriver.tar.gz" (
+        powershell tar -zxvf msedgedriver.tar.gz
+        if exist "msedgedriver.exe" (
+             python ./worm.py
+        ) 
+    ) else (    
+        echo "没有找到msedgedriver.tar.gz"
+        echo "正在下载webdriver到本文件目录下"
+        start https://msedgedriver.azureedge.net/105.0.1343.53/edgedriver_win64.zip
+        echo "下载后请解压至当前目录,并重新执行本文件"
+    )
+
 )
 pause
 exit

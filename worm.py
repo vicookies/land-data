@@ -12,8 +12,9 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
-from msedge.selenium_tools import Edge, EdgeOptions
-
+from selenium.webdriver.edge.options import Options
+from selenium.webdriver.edge.service import Service
+from selenium.webdriver.common.by import By
 
 #--------------------------------------------------------------------
 #在此输入想要获取的参数 -----------------------------------------------
@@ -63,12 +64,13 @@ def getpage(browser):
 
 
 def getData(date_begin=None, date_end=None, zero=None):
-    options = EdgeOptions()
+    options = Options()
     options.use_chromium = True
     # 浏览器的位置
     options.binary_location = r'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
     # 相应的浏览器的驱动位置
-    browser = Edge(options=options, executable_path=r'./msedgedriver')
+    s = Service("./msedgedriver.exe")
+    browser = webdriver.Edge(options=options, service=s)
     # 用chrome浏览器自动打开爬取的网页
     browser.get('https://www.landchina.com/#/')
     input("打开供地结果页面，并设置好所有限制条件后，按任何键以继续")
@@ -81,11 +83,11 @@ def getData(date_begin=None, date_end=None, zero=None):
         setdate(browser, date_begin, date_end)
     if (zero != None):
         setzero(browser, zero)
-    browser.find_element_by_xpath(
+    browser.find_element(By.XPATH,
         '//*[@id="appMain"]/div/div[3]/div[3]/form[2]/div[4]/div').click()
 
     itemsNum = re.findall(
-        '\d+', browser.find_element_by_xpath('//*[@id="appMain"]/div/div[5]/div/div[1]').text)
+        '\d+', browser.find_element(By.XPATH,'//*[@id="appMain"]/div/div[5]/div/div[1]').text)
     if (int(itemsNum[0]) != int(itemsNum[1])):
         print("结果有"+itemsNum[0]+"个，超过6000,建议多次分时执行本脚本")
     # 设置点击翻页次数为999//*[@id="appMain"]/div/div[5]/table/tr[3]
@@ -97,10 +99,10 @@ def getData(date_begin=None, date_end=None, zero=None):
             remain = 10
         for m in range(remain):
             flag = 1
-            #name=browser.find_element_by_xpath('//*[@id="appMain"]/div/div[5]/table/tr['+ str(index) +']').text.split('\n')
+            #name=browser.find_element(By.XPATH,'//*[@id="appMain"]/div/div[5]/table/tr['+ str(index) +']').text.split('\n')
             while (flag):
                 try:
-                    browser.find_element_by_xpath(
+                    browser.find_element(By.XPATH,
                         '//*[@id="appMain"]/div/div[5]/table/tr[' + str(index) + ']').click()
                     flag = 0
                 except:
@@ -115,7 +117,7 @@ def getData(date_begin=None, date_end=None, zero=None):
             browser.switch_to.window(handle[0])
             index = index + 1
             sleep(1)
-        browser.find_element_by_xpath(
+        browser.find_element(By.XPATH,
             '//*[@id="appMain"]/div/div[5]/div/div[2]/button[2]').click()
     return
 
